@@ -23,9 +23,8 @@ public class YeJJConsumer<T> {
 
     YeJJBroker broker;
 
-    String topic;
+    //String topic;
 
-    YeJJMq mq;
 
     static AtomicInteger idgen = new AtomicInteger(0);
 
@@ -33,19 +32,30 @@ public class YeJJConsumer<T> {
         this.broker = broker;
         this.id = "CID" +  idgen.getAndIncrement();
     }
-    public void subscribe(String topic){
-        this.topic = topic;
-        mq = broker.find(topic);
-        if (mq == null){
-            throw new RuntimeException("topic not found");
-        }
+    public void sub(String topic){
+        broker.sub(topic,id);
+
     }
-    public YeJJMessage<T> poll(long timeout){
-        return mq.poll(timeout);
+    public void unsub(String topic){
+        broker.unsub(topic,id);
+
+    }
+    public YeJJMessage<T> recv(String topic){
+        return broker.recv(topic,id);
+    }
+    public boolean ack(String topic, int offset){
+        return broker.ack(topic,id,offset);
+    }
+    public boolean ack(String topic, YeJJMessage<?> message){
+        if (message.getHeaders().isEmpty()){
+            return false;
+        }
+        String offset = message.getHeaders().get("X-offset");
+        return broker.ack(topic,id,Integer.valueOf(offset));
     }
 
-    public void listen(YeJJListener<T> listener){
-        mq.addListener(listener);
+    public void listen(String topic,YeJJListener<T> listener){
+        broker.addListener(topic,listener);
     }
 
 }

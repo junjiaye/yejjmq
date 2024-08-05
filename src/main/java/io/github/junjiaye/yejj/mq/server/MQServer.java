@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class MQServer {
     //send
     @RequestMapping("/send")
-    public Result<String> send(@RequestParam("t") String topic, @RequestParam("cid") String comsumerId,
+    public Result<String> send(@RequestParam("t") String topic,
                                @RequestBody YeJJMessage<String> message){
         //
-        return Result.ok(String.valueOf(MessageQueue.send(topic,comsumerId,message)));
+        return Result.ok(String.valueOf(MessageQueue.send(topic,message)));
     }
     //recv
+    //http://localhost:8765/yejjmq/recv?t=cn.yejj.test&cid=CID0
     @RequestMapping("/recv")
-    public Result<YeJJMessage<?>> recv(@RequestParam("t") String topic, @RequestParam("cid") String comsumerId,
-                       @RequestBody YeJJMessage<String> message){
+    public Result<YeJJMessage<?>> recv(@RequestParam("t") String topic, @RequestParam("cid") String comsumerId){
         //
         return Result.msg(MessageQueue.recv(topic,comsumerId));
     }
@@ -40,13 +40,13 @@ public class MQServer {
     }
     //sub
     @RequestMapping("/sub")
-    public Result<String> subscribe(@RequestParam("t") String topic,@RequestParam("cid") String comsumerId){
+    public Result<String> sub(@RequestParam("t") String topic,@RequestParam("cid") String comsumerId){
         MessageQueue.sub(new MessageSubscription(topic,comsumerId,-1));
         return Result.ok();
     }
     //unsub
     @RequestMapping("/ubsub")
-    public Result<String> unsubscribe(@RequestParam("t") String topic,@RequestParam("cid") String comsumerId){
+    public Result<String> unsub(@RequestParam("t") String topic,@RequestParam("cid") String comsumerId){
         MessageQueue.unsub(new MessageSubscription(topic,comsumerId,-1));
         return Result.ok();
     }

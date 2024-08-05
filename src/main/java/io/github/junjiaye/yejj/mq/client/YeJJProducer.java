@@ -16,11 +16,7 @@ public class YeJJProducer {
     YeJJBroker broker;
 
     public boolean send(String topic, YeJJMessage message){
-        YeJJMq mq = broker.find(topic);
-        if (mq == null){
-            throw new RuntimeException("topic not found");
-        }
-        return mq.send(message);
+        return broker.send(topic,message);
 
     }
 }
